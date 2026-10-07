@@ -313,29 +313,26 @@ export default function AdminDashboardPage() {
 
   const formatCurrency = (amount: number) => {
     if (amount >= 1_000_000) {
-      return `$${(amount / 1_000_000).toFixed(2)}M`;
+      return `${(amount / 1_000_000).toFixed(2)}M ETB`;
     }
     if (amount >= 1_000) {
-      return `$${(amount / 1_000).toFixed(1)}k`;
+      return `${(amount / 1_000).toFixed(1)}k ETB`;
     }
-    return `$${amount.toLocaleString()}`;
+    return `${amount.toLocaleString()} ETB`;
   };
 
   // Menu items matching the sidebar
   const menuItems = [
-    { name: "Dashboard", icon: "dashboard", href: "#" },
-    { name: "Projects", icon: "projects", href: "/projects" },
-    { name: "Users", icon: "users", href: "#" },
-    { name: "Suppliers", icon: "suppliers", href: "#" },
-    { name: "Materials", icon: "materials", href: "#" },
-    { name: "Inventory", icon: "inventory", href: "#" },
-    { name: "Procurement", icon: "procurement", href: "/procurement-officer" },
-    { name: "Workforce", icon: "workforce", href: "/hr-manager" },
-    { name: "Financials", icon: "financials", href: "/accountant" },
-    { name: "Reports", icon: "reports", href: "#" },
-    { name: "AI Predictions", icon: "ai", href: "/ai-analytics" },
+    { name: "Executive Hub", icon: "dashboard", href: "/admin" },
+    { name: "GM Portal", icon: "dashboard", href: "/general-manager" },
+    { name: "Projects Directory", icon: "projects", href: "/projects" },
+    { name: "Project Management", icon: "projects", href: "/project-manager" },
+    { name: "Workforce & HR", icon: "workforce", href: "/hr-manager" },
+    { name: "Field Site Ops", icon: "projects", href: "/site-engineer" },
+    { name: "Procurement & Store", icon: "procurement", href: "/procurement-officer" },
+    { name: "Financials & Ledger", icon: "financials", href: "/accountant" },
+    { name: "AI Analytics", icon: "ai", href: "/ai-analytics" },
     { name: "Notifications", icon: "notifications", badge: unreadNotificationCount, href: "#" },
-    { name: "Settings", icon: "settings", href: "#" },
     { name: "Activity Log", icon: "activity", href: "#" },
   ];
 
@@ -1049,6 +1046,137 @@ export default function AdminDashboardPage() {
 
         {/* -------------------- DASHBOARD MAIN CONTENT -------------------- */}
         <main className="p-6 sm:p-8 space-y-7 max-w-[1600px] mx-auto w-full">
+          {/* GENERAL MANAGER COMMAND CENTER - ALL MODULE BUTTONS */}
+          <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-800 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-800/80 relative z-10">
+              <div className="flex items-center gap-3">
+                <span className="p-2.5 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-600 text-slate-950 font-black text-lg shadow-lg shadow-amber-500/20">
+                  👑
+                </span>
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+                    General Manager Command Center
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-widest">
+                      Full Executive Access
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Centralized management and real-time operational control across all company departments.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/general-manager"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 text-xs font-bold transition"
+                >
+                  <span>⚡ GM Project Auth Portal</span>
+                  <span>&rarr;</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Grid of All Department Module Buttons */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mt-5 relative z-10">
+              <Link
+                href="/projects"
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-blue-500/50 transition-all duration-200 group flex flex-col justify-between shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="p-2 rounded-xl bg-blue-500/10 text-blue-400 text-lg group-hover:scale-110 transition-transform">
+                    🏗️
+                  </span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-blue-400 font-semibold">&rarr;</span>
+                </div>
+                <div className="mt-3">
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-white">Projects Hub</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{data.metrics.totalProjects} Portfolios</div>
+                </div>
+              </Link>
+
+              <Link
+                href="/project-manager"
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-cyan-500/50 transition-all duration-200 group flex flex-col justify-between shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 text-lg group-hover:scale-110 transition-transform">
+                    👷
+                  </span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-cyan-400 font-semibold">&rarr;</span>
+                </div>
+                <div className="mt-3">
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-white">Project Manager</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">Tasks & Gantt</div>
+                </div>
+              </Link>
+
+              <Link
+                href="/hr-manager"
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-orange-500/50 transition-all duration-200 group flex flex-col justify-between shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="p-2 rounded-xl bg-orange-500/10 text-orange-400 text-lg group-hover:scale-110 transition-transform">
+                    👥
+                  </span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-orange-400 font-semibold">&rarr;</span>
+                </div>
+                <div className="mt-3">
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-white">Workforce & HR</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{data.metrics.totalWorkforce || 0} Staff & Pay (ETB)</div>
+                </div>
+              </Link>
+
+              <Link
+                href="/site-engineer"
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-teal-500/50 transition-all duration-200 group flex flex-col justify-between shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="p-2 rounded-xl bg-teal-500/10 text-teal-400 text-lg group-hover:scale-110 transition-transform">
+                    📐
+                  </span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-teal-400 font-semibold">&rarr;</span>
+                </div>
+                <div className="mt-3">
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-white">Site Operations</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">Field Logs & Inspections</div>
+                </div>
+              </Link>
+
+              <Link
+                href="/procurement-officer"
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-emerald-500/50 transition-all duration-200 group flex flex-col justify-between shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 text-lg group-hover:scale-110 transition-transform">
+                    📦
+                  </span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-emerald-400 font-semibold">&rarr;</span>
+                </div>
+                <div className="mt-3">
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-white">Procurement & Store</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{data.metrics.totalSuppliers} Vendors & POs</div>
+                </div>
+              </Link>
+
+              <Link
+                href="/accountant"
+                className="p-4 rounded-2xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-amber-500/50 transition-all duration-200 group flex flex-col justify-between shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="p-2 rounded-xl bg-amber-500/10 text-amber-400 text-lg group-hover:scale-110 transition-transform">
+                    💰
+                  </span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-amber-400 font-semibold">&rarr;</span>
+                </div>
+                <div className="mt-3">
+                  <div className="text-xs font-bold text-slate-200 group-hover:text-white">Finance & Ledger</div>
+                  <div className="text-[10px] text-slate-400 mt-0.5">{formatCurrency(data.metrics.totalExpenses)} Spent</div>
+                </div>
+              </Link>
+            </div>
+          </div>
+
           {/* ROW 1: 6 TOP STAT METRIC CARDS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-5">
             {/* 1. Total Projects */}

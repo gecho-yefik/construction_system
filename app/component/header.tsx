@@ -11,18 +11,13 @@ export default function Header() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [modulesDropdownOpen, setModulesDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const modulesRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
         setProfileOpen(false);
-      }
-      if (modulesRef.current && !modulesRef.current.contains(e.target as Node)) {
-        setModulesDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -36,6 +31,7 @@ export default function Header() {
 
   const user = session?.user;
   const userRole = (user as { role?: string })?.role || "GUEST";
+  const isGeneralManager = userRole === "GENERAL_MANAGER";
 
   // Map each role to their dedicated dashboard
   const getRoleDashboard = (role: string) => {
@@ -53,25 +49,13 @@ export default function Header() {
       case "ACCOUNTANT":
         return { name: "💰 Finance & Ledger", href: "/accountant", color: "from-green-400 to-emerald-500" };
       default:
-        return { name: "📊 My Dashboard", href: "/projects", color: "from-amber-400 to-amber-500" };
+        return { name: "📊 My Workspace", href: "/projects", color: "from-amber-400 to-amber-500" };
     }
   };
 
   const currentDashboard = getRoleDashboard(userRole);
 
-  // All available system modules
-  const allModules = [
-    { name: "👑 BuildMaster Admin Hub", href: "/admin", role: "General Manager / Admin" },
-    { name: "👷 Project Management", href: "/project-manager", role: "Project Manager" },
-    { name: "👥 Workforce & HR", href: "/hr-manager", role: "HR Manager" },
-    { name: "📐 Field Operations", href: "/site-engineer", role: "Site Engineer" },
-    { name: "📦 Procurement & Store", href: "/procurement-officer", role: "Procurement Officer" },
-    { name: "💰 Finance & Control", href: "/accountant", role: "Accountant" },
-    { name: "🧠 AI Analytics", href: "/ai-analytics", role: "Executive & AI Engine" },
-    { name: "🏗️ Projects Directory", href: "/projects", role: "All Roles" },
-  ];
-
-  // Public Navigation Links (as shown in BuildMaster landing page)
+  // Public Navigation Links
   const publicNavLinks = [
     { name: "Home", href: "/#home" },
     { name: "About Us", href: "/#about" },
@@ -134,7 +118,6 @@ export default function Header() {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-7">
-            {/* If unauthenticated or on public pages, show public links */}
             {!user ? (
               publicNavLinks.map((link) => (
                 <Link
@@ -147,7 +130,6 @@ export default function Header() {
               ))
             ) : (
               <>
-                {/* Public links */}
                 <Link href="/" className="text-xs font-semibold text-slate-300 hover:text-amber-400 transition-colors">
                   Home
                 </Link>
@@ -155,7 +137,7 @@ export default function Header() {
                   Projects
                 </Link>
 
-                {/* Direct Role-Specific Primary Dashboard Button */}
+                {/* Role's Authorized Dashboard Button */}
                 <Link
                   href={currentDashboard.href}
                   className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 font-bold text-xs hover:bg-amber-500/25 transition-all shadow-sm"
@@ -163,54 +145,6 @@ export default function Header() {
                   <span>{currentDashboard.name}</span>
                   <span>&rarr;</span>
                 </Link>
-
-                {/* Modules Switcher Dropdown */}
-                <div className="relative" ref={modulesRef}>
-                  <button
-                    onClick={() => setModulesDropdownOpen(!modulesDropdownOpen)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white hover:border-slate-700 transition"
-                  >
-                    <span>All Modules</span>
-                    <svg
-                      className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
-                        modulesDropdownOpen ? "rotate-180" : ""
-                      }`}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </button>
-
-                  {modulesDropdownOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-2 z-50 animate-fadeIn">
-                      <div className="px-3 py-2 border-b border-slate-800">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                          Switch Workspace
-                        </span>
-                      </div>
-                      <div className="divide-y divide-slate-800/60 mt-1 max-h-72 overflow-y-auto">
-                        {allModules.map((mod) => (
-                          <Link
-                            key={mod.name}
-                            href={mod.href}
-                            onClick={() => setModulesDropdownOpen(false)}
-                            className="flex flex-col px-3 py-2 rounded-xl hover:bg-slate-800/80 transition group"
-                          >
-                            <span className="text-xs font-semibold text-slate-200 group-hover:text-amber-400">
-                              {mod.name}
-                            </span>
-                            <span className="text-[10px] text-slate-400">
-                              {mod.role}
-                            </span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
               </>
             )}
           </nav>
@@ -266,13 +200,17 @@ export default function Header() {
                       >
                         {currentDashboard.name}
                       </Link>
-                      <Link
-                        href="/admin"
-                        onClick={() => setProfileOpen(false)}
-                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
-                      >
-                        ⚡ BuildMaster Admin Hub
-                      </Link>
+
+                      {isGeneralManager && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setProfileOpen(false)}
+                          className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                        >
+                          ⚡ BuildMaster Admin Hub
+                        </Link>
+                      )}
+
                       <Link
                         href="/projects"
                         onClick={() => setProfileOpen(false)}
@@ -344,16 +282,29 @@ export default function Header() {
                 </Link>
               ))
             ) : (
-              allModules.map((link) => (
+              <>
                 <Link
-                  key={link.name}
-                  href={link.href}
+                  href="/"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block px-3 py-2 text-sm font-medium text-slate-300 hover:text-amber-400 hover:bg-slate-900 rounded-lg"
                 >
-                  {link.name}
+                  Home
                 </Link>
-              ))
+                <Link
+                  href="/projects"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 text-sm font-medium text-slate-300 hover:text-amber-400 hover:bg-slate-900 rounded-lg"
+                >
+                  📁 Projects Directory
+                </Link>
+                <Link
+                  href={currentDashboard.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 text-sm font-semibold text-amber-400 bg-amber-500/10 rounded-lg"
+                >
+                  {currentDashboard.name}
+                </Link>
+              </>
             )}
           </div>
 

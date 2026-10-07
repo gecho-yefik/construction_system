@@ -7,7 +7,7 @@ import { signIn, useSession } from "next-auth/react";
 function AuthContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { update } = useSession();
+  const { data: session, status, update } = useSession();
 
   const mode = searchParams.get("mode");
   const isRegisterMode = mode === "register" || mode === "signup";
@@ -32,6 +32,25 @@ function AuthContent() {
     forgotEmail: "",
   });
 
+  const getDashboardHref = (role?: string) => {
+    switch (role) {
+      case "GENERAL_MANAGER":
+        return "/admin";
+      case "PROJECT_MANAGER":
+        return "/project-manager";
+      case "HR_MANAGER":
+        return "/hr-manager";
+      case "SITE_ENGINEER":
+        return "/site-engineer";
+      case "PROCUREMENT_OFFICER":
+        return "/procurement-officer";
+      case "ACCOUNTANT":
+        return "/accountant";
+      default:
+        return "/admin";
+    }
+  };
+
   // Validation functions
   const validateName = (value: string): string => {
     if (!value.trim()) return "Name is required";
@@ -48,22 +67,22 @@ function AuthContent() {
       return "Username must be at least 3 characters";
     if (value.trim().length > 15)
       return "Username must be less than 15 characters";
-    
- 
+
+
     if (!/^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+$/.test(value)) {
       return "Username can only contain letters, numbers, and special characters";
     }
-    
+
     // Check if it contains at least one alphanumeric character (letter or number)
     if (!/[a-zA-Z0-9]/.test(value)) {
       return "Username must contain at least one letter or number";
     }
-    
+
     // Check if it starts with a letter (optional rule - you can remove if you want)
     // if (!/^[a-zA-Z]/.test(value)) {
     //   return "Username must start with a letter";
     // }
-    
+
     return "";
   };
 
@@ -77,7 +96,7 @@ function AuthContent() {
 
   const validatePassword = (value: string): string => {
     if (!value) return "Password is required";
-    
+
     // Updated password validation:
     // Minimum length: 8 characters
     if (value.length < 8) return "Password must be at least 8 characters";
@@ -88,11 +107,11 @@ function AuthContent() {
       // At least one letter (upper or lower)
       if (!/[a-zA-Z]/.test(value))
         return "Password must contain at least one letter";
-      
+
       // At least one number
       if (!/[0-9]/.test(value))
         return "Password must contain at least one digit";
-      
+
       // At least one special character
       if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value))
         return "Password must contain at least one special character";
@@ -178,6 +197,12 @@ function AuthContent() {
   }, [searchParams]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace(getDashboardHref(session.user?.role));
+    }
+  }, [router, session, status]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -210,7 +235,6 @@ function AuthContent() {
         } else {
           console.log("Login successful, updating session...");
           await update();
-          router.push("/");
         }
       } else {
         // Check username availability before submitting
@@ -251,7 +275,7 @@ function AuthContent() {
           if (data.data?.verificationToken) {
             setSuccess(
               data.message +
-                ` (Dev: Click here to verify: /api/auth/verify-email?token=${data.data.verificationToken})`,
+              ` (Dev: Click here to verify: /api/auth/verify-email?token=${data.data.verificationToken})`,
             );
           }
           setPassword("");
@@ -277,7 +301,7 @@ function AuthContent() {
 
   const handleGoogleLogin = async () => {
     try {
-      await signIn("google", { callbackUrl: "/" });
+      await signIn("google", { callbackUrl: "/auth" });
     } catch {
       setError("Google login failed");
     }
@@ -581,7 +605,7 @@ function AuthContent() {
                           const hasNumber = /[0-9]/.test(password);
                           const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
                           const criteriaCount = [hasLetter, hasNumber, hasSpecial, password.length >= 8].filter(Boolean).length;
-                          
+
                           if (criteriaCount >= 4) return "#10b981"; // Strong
                           if (criteriaCount >= 3) return "#f59e0b"; // Medium
                           if (criteriaCount >= 2) return "#f97316"; // Weak
