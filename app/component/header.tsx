@@ -37,7 +37,7 @@ export default function Header() {
   const getRoleDashboard = (role: string) => {
     switch (role) {
       case "GENERAL_MANAGER":
-        return { name: "👑 Admin Dashboard", href: "/admin", color: "from-amber-400 to-yellow-500" };
+        return { name: "👑 General Manager Hub", href: "/general-manager", color: "from-amber-400 to-yellow-500" };
       case "PROJECT_MANAGER":
         return { name: "👷 PM Dashboard", href: "/project-manager", color: "from-blue-400 to-cyan-500" };
       case "HR_MANAGER":
@@ -136,6 +136,9 @@ export default function Header() {
                 <Link href="/projects" className="text-xs font-semibold text-slate-300 hover:text-amber-400 transition-colors">
                   Projects
                 </Link>
+                <Link href="/ai-analytics" className="text-xs font-semibold text-fuchsia-300 hover:text-fuchsia-400 flex items-center gap-1 transition-colors">
+                  <span>🧠</span> AI Analytics
+                </Link>
 
                 {/* Role's Authorized Dashboard Button */}
                 <Link
@@ -183,7 +186,7 @@ export default function Header() {
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-3 z-50 space-y-2 animate-fadeIn">
+                  <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-3 z-50 space-y-2 animate-fadeIn max-h-[85vh] overflow-y-auto">
                     <div className="p-2 border-b border-slate-800">
                       <p className="text-xs font-bold text-white truncate">{user.name || "User"}</p>
                       <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
@@ -193,6 +196,9 @@ export default function Header() {
                     </div>
 
                     <div className="space-y-1">
+                      <p className="px-2 pt-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        My Portal
+                      </p>
                       <Link
                         href={currentDashboard.href}
                         onClick={() => setProfileOpen(false)}
@@ -201,16 +207,65 @@ export default function Header() {
                         {currentDashboard.name}
                       </Link>
 
-                      {isGeneralManager && (
-                        <Link
-                          href="/admin"
-                          onClick={() => setProfileOpen(false)}
-                          className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
-                        >
-                          ⚡ BuildMaster Admin Hub
-                        </Link>
-                      )}
-
+                      <p className="px-2 pt-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        All System Modules
+                      </p>
+                      <Link
+                        href="/general-manager"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                      >
+                        👑 General Manager
+                      </Link>
+                      <Link
+                        href="/project-manager"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                      >
+                        👷 Project Manager
+                      </Link>
+                      <Link
+                        href="/hr-manager"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                      >
+                        👥 HR & Workforce
+                      </Link>
+                      <Link
+                        href="/site-engineer"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                      >
+                        📐 Site Engineer
+                      </Link>
+                      <Link
+                        href="/procurement-officer"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                      >
+                        📦 Procurement & Store
+                      </Link>
+                      <Link
+                        href="/accountant"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                      >
+                        💰 Finance & Accountant
+                      </Link>
+                      <Link
+                        href="/ai-analytics"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-fuchsia-300 hover:text-fuchsia-200 hover:bg-fuchsia-950/40 rounded-lg"
+                      >
+                        🧠 AI Analytics & Predictions
+                      </Link>
+                      <Link
+                        href="/admin"
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg"
+                      >
+                        ⚡ BuildMaster Admin Hub
+                      </Link>
                       <Link
                         href="/projects"
                         onClick={() => setProfileOpen(false)}
@@ -298,12 +353,29 @@ export default function Header() {
                   📁 Projects Directory
                 </Link>
                 <Link
+                  href="/ai-analytics"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 text-sm font-semibold text-fuchsia-400 bg-fuchsia-500/10 rounded-lg"
+                >
+                  🧠 AI Predictive Analytics
+                </Link>
+                <Link
                   href={currentDashboard.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block px-3 py-2 text-sm font-semibold text-amber-400 bg-amber-500/10 rounded-lg"
                 >
                   {currentDashboard.name}
                 </Link>
+                <div className="pt-2 border-t border-slate-800/80 space-y-1">
+                  <p className="px-3 text-[10px] font-bold text-slate-500 uppercase">All Portals</p>
+                  <Link href="/general-manager" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg">👑 General Manager</Link>
+                  <Link href="/project-manager" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg">👷 Project Manager</Link>
+                  <Link href="/hr-manager" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg">👥 HR & Workforce</Link>
+                  <Link href="/site-engineer" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg">📐 Site Engineer</Link>
+                  <Link href="/procurement-officer" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg">📦 Procurement & Store</Link>
+                  <Link href="/accountant" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg">💰 Finance & Ledger</Link>
+                  <Link href="/admin" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-1.5 text-xs text-slate-300 hover:text-white rounded-lg">⚡ Admin Hub</Link>
+                </div>
               </>
             )}
           </div>

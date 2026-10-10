@@ -14,8 +14,16 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
     const search = searchParams.get("search");
+    const userRole = (session.user as { role?: string })?.role;
+    const userId = session.user.id;
 
     const where: any = {};
+
+    // Role Enforcement: Project Manager is only allowed to see projects assigned to them
+    if (userRole === "PROJECT_MANAGER") {
+      where.managerId = userId;
+    }
+
     if (status && status !== "ALL") {
       where.status = status;
     }

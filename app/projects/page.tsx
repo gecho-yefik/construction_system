@@ -169,6 +169,11 @@ export default function ProjectsPage() {
                   👑 General Manager Authorization
                 </span>
               )}
+              {(session?.user as { role?: string })?.role === "PROJECT_MANAGER" && (
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-400/15 text-blue-300 border border-blue-400/30">
+                  Assigned Projects 
+                </span>
+              )}
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">
               Construction Projects
@@ -194,7 +199,7 @@ export default function ProjectsPage() {
               </button>
             ) : (
               <div className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400 flex items-center gap-2">
-                <span>🛡️</span>
+                
                 <span>Project updates &amp; creation: <strong>General Manager</strong></span>
               </div>
             )}

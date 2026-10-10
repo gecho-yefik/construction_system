@@ -177,7 +177,6 @@ function AuthContent() {
   };
 
   // Handle verification success/failure messages
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const verified = searchParams.get("verified");
     const verificationError = searchParams.get("error");

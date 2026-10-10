@@ -432,7 +432,7 @@ export default function ProcurementOfficerPage() {
                     </div>
 
                     {req.notes && (
-                      <p className="text-xs text-slate-400 italic">"{req.notes}"</p>
+                      <p className="text-xs text-slate-400 italic">&quot;{req.notes}&quot;</p>
                     )}
                   </div>
 

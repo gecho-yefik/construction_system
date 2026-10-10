@@ -23,6 +23,25 @@ export async function PATCH(
     }
 
     const { id: requestId } = await params;
+    const userId = session.user.id;
+
+    // Check request existence and project assignment
+    const existingReq = await prisma.materialRequest.findUnique({
+      where: { id: requestId },
+      include: { project: { select: { managerId: true } } },
+    });
+
+    if (!existingReq) {
+      return NextResponse.json({ error: "Material request not found" }, { status: 404 });
+    }
+
+    if (userRole === "PROJECT_MANAGER" && existingReq.project.managerId !== userId) {
+      return NextResponse.json(
+        { error: "Forbidden: You are only authorized to review material requests for your assigned project." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { status, notes } = body;
 

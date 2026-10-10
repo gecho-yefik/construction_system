@@ -29,6 +29,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Role Enforcement: PM can only create tasks for their assigned project
+    const userId = session.user.id;
+    if (userRole === "PROJECT_MANAGER") {
+      const project = await prisma.project.findUnique({
+        where: { id: projectId },
+        select: { managerId: true },
+      });
+      if (!project || project.managerId !== userId) {
+        return NextResponse.json(
+          { error: "Forbidden: You are only permitted to schedule tasks for your assigned project." },
+          { status: 403 }
+        );
+      }
+    }
+
     const task = await prisma.task.create({
       data: {
         projectId,

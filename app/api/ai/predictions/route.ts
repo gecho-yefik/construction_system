@@ -13,9 +13,14 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const projectId = searchParams.get("projectId");
+    const userRole = (session.user as { role?: string })?.role;
+    const userId = session.user.id;
 
     const where: any = {};
     if (projectId) where.projectId = projectId;
+    if (userRole === "PROJECT_MANAGER") {
+      where.project = { managerId: userId };
+    }
 
     const predictions = await prisma.aiPrediction.findMany({
       where,
@@ -43,6 +48,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const userRole = (session.user as { role?: string })?.role;
+    const userId = session.user.id;
+
     const body = await req.json();
     const { projectId } = body;
 
@@ -65,6 +73,14 @@ export async function POST(req: NextRequest) {
 
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    // Role Enforcement: PM can only run AI analysis on assigned projects
+    if (userRole === "PROJECT_MANAGER" && project.managerId !== userId) {
+      return NextResponse.json(
+        { error: "Forbidden: You can only run AI diagnostics on projects assigned to you." },
+        { status: 403 }
+      );
     }
 
     // 1. Cost Analysis

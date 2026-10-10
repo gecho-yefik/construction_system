@@ -53,7 +53,7 @@ export default function HomePage() {
   const getDashboardHref = () => {
     switch (userRole) {
       case "GENERAL_MANAGER":
-        return "/admin";
+        return "/general-manager";
       case "PROJECT_MANAGER":
         return "/project-manager";
       case "HR_MANAGER":
@@ -139,6 +139,16 @@ export default function HomePage() {
         </svg>
       ),
       link: user ? "/accountant" : "/auth",
+    },
+    {
+      title: "AI Predictive Analytics",
+      desc: "Cost overrun forecasting, schedule delay predictions, and resource optimization.",
+      icon: (
+        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
+      link: user ? "/ai-analytics" : "/auth",
     },
   ];
 
@@ -313,7 +323,7 @@ export default function HomePage() {
             </h2>
           </div>
 
-          {/* 7 Services Grid Cards */}
+         
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 sm:gap-3">
             {services.map((srv, idx) => (
               <Link

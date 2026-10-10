@@ -15,6 +15,9 @@ export async function GET(
     }
 
     const { id } = await params;
+    const userRole = (session.user as { role?: string })?.role;
+    const userId = session.user.id;
+
     const project = await prisma.project.findUnique({
       where: { id },
       include: {
@@ -58,6 +61,14 @@ export async function GET(
 
     if (!project) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
+    }
+
+    // Role Enforcement: Project Managers are strictly limited to projects assigned to them
+    if (userRole === "PROJECT_MANAGER" && project.managerId !== userId) {
+      return NextResponse.json(
+        { error: "Forbidden: You are only authorized to access projects assigned to you." },
+        { status: 403 }
+      );
     }
 
     return NextResponse.json({ project });

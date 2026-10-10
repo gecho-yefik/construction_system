@@ -15,6 +15,26 @@ export async function PATCH(
     }
 
     const { id: taskId } = await params;
+    const userRole = (session.user as { role?: string })?.role;
+    const userId = session.user.id;
+
+    // Verify task existence and assigned project authorization
+    const existingTask = await prisma.task.findUnique({
+      where: { id: taskId },
+      include: { project: { select: { managerId: true } } },
+    });
+
+    if (!existingTask) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    if (userRole === "PROJECT_MANAGER" && existingTask.project.managerId !== userId) {
+      return NextResponse.json(
+        { error: "Forbidden: You are only authorized to manage tasks for your assigned project." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { status, name, description, dueDate } = body;
 
@@ -61,6 +81,25 @@ export async function DELETE(
     }
 
     const { id: taskId } = await params;
+    const userRole = (session.user as { role?: string })?.role;
+    const userId = session.user.id;
+
+    const existingTask = await prisma.task.findUnique({
+      where: { id: taskId },
+      include: { project: { select: { managerId: true } } },
+    });
+
+    if (!existingTask) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    if (userRole === "PROJECT_MANAGER" && existingTask.project.managerId !== userId) {
+      return NextResponse.json(
+        { error: "Forbidden: You are only authorized to delete tasks for your assigned project." },
+        { status: 403 }
+      );
+    }
+
     await prisma.task.delete({ where: { id: taskId } });
 
     return NextResponse.json({ success: true, message: "Task deleted successfully" });

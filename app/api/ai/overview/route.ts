@@ -3,16 +3,26 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const userRole = (session.user as { role?: string })?.role;
+    const userId = session.user.id;
+
+    const projectWhere: any = {
+      status: { in: ["IN_PROGRESS", "PLANNED"] },
+      ...(userRole === "PROJECT_MANAGER" ? { managerId: userId } : {}),
+    };
+
+    const predictionWhere: any = userRole === "PROJECT_MANAGER" ? { project: { managerId: userId } } : {};
+
     const [projects, allPredictions] = await Promise.all([
       prisma.project.findMany({
-        where: { status: { in: ["IN_PROGRESS", "PLANNED"] } },
+        where: projectWhere,
         include: {
           expenses: true,
           tasks: true,
@@ -22,6 +32,7 @@ export async function GET(req: NextRequest) {
         },
       }),
       prisma.aiPrediction.findMany({
+        where: predictionWhere,
         orderBy: { generatedAt: "desc" },
         take: 20,
         include: {
@@ -50,8 +61,8 @@ export async function GET(req: NextRequest) {
 
       // Deterministic risk calculation
       let risk: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" = "LOW";
-      let predictedDelay = overdueTasks * 7 + (taskProgress < 20 && spendRatio > 0.5 ? 14 : 0);
-      let predictedCostOverrun =
+      const predictedDelay = overdueTasks * 7 + (taskProgress < 20 && spendRatio > 0.5 ? 14 : 0);
+      const predictedCostOverrun =
         taskProgress > 0
           ? Math.max(0, ((totalSpent / (taskProgress / 100) - budget) / budget) * 100)
           : 0;

@@ -474,7 +474,7 @@ export default function HRManagerPage() {
           <div className="text-xs text-slate-500 mt-1">Active projects</div>
         </div>
         <div className="p-4 rounded-2xl bg-slate-900/80 border border-amber-500/20 backdrop-blur-sm shadow-xl">
-          <div className="text-xs font-semibold uppercase text-amber-400">Today's Payroll</div>
+          <div className="text-xs font-semibold uppercase text-amber-400">Today&apos;s Payroll</div>
           <div className="text-2xl font-black mt-1 text-amber-400">
             {(metrics.todayLaborCost || 0).toLocaleString()} <span className="text-xs font-normal">ETB</span>
           </div>
